@@ -1,0 +1,31 @@
+import org.scalatest._
+
+class BasketPricerSpec extends FlatSpec with Matchers {
+  "BasketPricer" should "calculate the correct price with no offers" in {
+    val items = List("Milk", "Bread")
+    val (subtotal, discounts, total) = BasketPricer.priceBasket(items)
+    subtotal shouldEqual 2.10
+    discounts shouldEqual Map()
+    total shouldEqual 2.10
+  }
+
+  it should "apply the apples discount" in {
+    val items = List("Apples", "Milk")
+    val (subtotal, discounts, total) = BasketPricer.priceBasket(items)
+    subtotal shouldEqual 2.30
+    discounts shouldEqual Map("Apples" -> (0.10, "off"))
+    total shouldEqual 2.20
+  }
+
+  it should "apply the soup and bread discount" in {
+    val items = List("Soup", "Soup", "Bread", "Milk")
+    val (subtotal, discounts, total) = BasketPricer.priceBasket(items)
+    subtotal shouldEqual 3.40
+    discounts shouldEqual Map("Soup_Bread" -> (0.40, "half_price"))
+    total shouldEqual 3.00
+  }
+}
+
+object BasketPricerSpecRunner extends App {
+  org.scalatest.run(new BasketPricerSpec)
+}
